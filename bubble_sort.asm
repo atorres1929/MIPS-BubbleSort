@@ -7,9 +7,9 @@ size: .word  12             # size of "array"
       lw $s5, 0($s5)	    # load value of size
       
       # Populate with twelve values
-      addi $t1, $zero, 55 #original value 55
+      addi $t1, $zero, 55
       sw $t1, 0($s0)
-      addi $t1, $zero, 88 #original value 88
+      addi $t1, $zero, 88
       sw $t1, 4($s0)
       addi $t1, $zero, 0
       sw $t1, 8($s0)
@@ -57,10 +57,11 @@ size: .word  12             # size of "array"
       ##############################
       # RELOAD $a registers and $ra
       ##############################
-      lw $a0, 0($sp)
-      lw $a1, 4($sp)	#This code is never called
-      lw $ra, 8($sp)
-      addi $sp, $sp, 12 
+      reload:
+        lw $a0, 0($sp)
+        lw $a1, 4($sp)
+        lw $ra, 8($sp)
+        addi $sp, $sp, 12 
       ##################################################################
 
                          
@@ -86,15 +87,14 @@ bubblesort:
 	sw $s5, 4($sp)
       ##################################################################
       # IF STATEMENT
-      #
+      startsort:
+        add $t7, $s5, $zero
+        beq $t7, 1, endsort # if n == 1 then goto over
       ############################
       # RETURN FROM FUNCTION
       ############################
       ##################################################################
-      startsort:
-        add $t7, $s5, $zero
-        beq $t7, 1, endsort # if n == 1 then goto over
-
+      
       ##################################################################
       # FOR LOOP
       ##################################################################
@@ -106,15 +106,21 @@ bubblesort:
       	slt $t0, $s1, $s2	# j < n-1
       	bne $t0, 1, done	# if j < n - 1 THEN continue, else GOTO done 	
       	lw $t1, 0($s0)		# t1 = arr[j]
-      	lw $t2, 4($s0)		# t2 = arr[j+1]
+      	# addi $s0, $s0, 4	# Advance index by 1
+      	li $t6, $t1
+      	add $t6, $t6, $t6
+      	add $t6, $t6, $t6
+      	lw $t2, 0($s0)		# t2 = arr[j+1]
       	add $t3, $zero, $zero   # target
       	slt $t3, $t2, $t1	# arr[j+1] < arr[j]
       	bne $t3, 1, endif	# if slt NOT true, end of if
-      	sw $t2, 0($s3)		# arr[j] = arr[j+1]
-      	sw $t1, 4($s3) 		# arr[j+1] = arr[j]	
+      	sw $t2, -4($s0)		# arr[j] = arr[j+1]	index is currently at +1, so we set it to 0 with -4
+      	sw $t1, 0($s0) 		# arr[j+1] = arr[j]	bubble up the larger number to the index of the smaller number's place
       endif:
       	addi $s1, $s1, 1	# increment j
       	j while
+      ##################################################################
+      # RECURSIVE CALL
       done:
       	addi $s5, $s5, -1	# decrement the size of the array to search from 12, 11, 10 etc. 
       	j startsort     	# call bubblesort again
@@ -122,13 +128,14 @@ bubblesort:
         lw $s0, 0($sp)
       	lw $s5, 4($sp)
       	addi $sp, $sp, 8
-      ##################################################################
-      # RECURSIVE CALL
-      #
+      	j reload
       ######################################
       # SAVE $a registers, $ra
       ######################################
-      #
+       # addi $sp, $sp, -12
+       # sw $a0, 0($sp)
+       # sw $a1, 4($sp)
+       # sw $ra, 8($sp)
       ######################################
       # CHANGE $a registers
       ######################################
