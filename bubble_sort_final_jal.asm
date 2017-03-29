@@ -40,12 +40,14 @@ size: .word  12             # size of "array"
       ##################################################################
       # PUT CODE HERE FOR CALL
       ##############################
-      # SAVE $a registers and $ra
+      # SAVE $a registers and $ra and $s registers
       ##############################
-      addi $sp, $sp, -12
+      addi $sp, $sp, -20
       sw $a0, 0($sp)
       sw $a1, 4($sp)
       sw $ra, 8($sp)
+      sw $s0, 12($sp)
+      sw $s5, 16($sp)
       ##############################
       # Change $a registers
       ##############################
@@ -56,12 +58,14 @@ size: .word  12             # size of "array"
       ##############################
       jal bubblesort
       ##############################
-      # RELOAD $a registers and $ra
+      # RELOAD $a registers and $ra and $s registers
       ##############################
       lw $a0, 0($sp)
       lw $a1, 4($sp)
       lw $ra, 8($sp)
-      addi $sp, $sp, 12 
+      lw $s0, 12($sp)
+      lw $s5, 16($sp)
+      addi $sp, $sp, 20
       ##################################################################
 
                          
@@ -77,13 +81,7 @@ size: .word  12             # size of "array"
 
 ########################################################################
 # PUT CODE HERE FOR FUNCTION
-bubblesort: # int[] arr(a0), int n(a1)
-      ##################################################################
-      # SAVE S REGISTERS
-      ##################################################################
-	#addi $sp, $sp, -8
-	#sw $s0, 0($sp)			# <- Why? The registers are not supposed to be saved between sub routines are they? Only the arguments are, that way you can play with the 
-	#sw $s5, 4($sp)			#   $s variables without worry
+bubblesort: # int[] arr(a0), int n(a1) 
       ##################################################################
       # IF STATEMENT
       beq $a1, 1, endsort 	# if n == 1 then goto over
@@ -106,7 +104,8 @@ bubblesort: # int[] arr(a0), int n(a1)
       	# Need arr[j] -> index = j * 4 so IF j = 4 THEN index = 16 (remember word size is 4)
       	add $t1, $s1, $s1	# t1 = j + j
       	add $t1, $t1, $t1	# t1 = j + j (j is now mulitplied by 4)
-      	add $t1, $a0, $t1	# t1 = index 0 + index j
+      	add $t1, $a0, $t1
+      		# t1 = index 0 + index j
       	lw $t2, 0($t1)		# load word at t1 which is arr[j]
       	
       	# Need arr[j+1] -> index = (j+1) * 4 so IF j = 4 THEN index = 20 (4+1=5 -> 5*4=20)
