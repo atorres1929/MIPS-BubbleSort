@@ -1,4 +1,4 @@
-<h1>MIPS Bubble Sort</h1>
+<h1>Assembly Bubble Sort</h1>
 
 This is a fully recurisve bubble sort algorithm written in MIPS.
 
