@@ -1,6 +1,6 @@
 <h1>Assembly Bubble Sort</h1>
 
-This is a fully recurisve bubble sort algorithm written in MIPS.
+This is a fully recursive  bubble sort algorithm written in MIPS.
 
 I wrote this for a project in my Fundamentals of Computer Systems course in Spring 2017 at Florida International University.
 
